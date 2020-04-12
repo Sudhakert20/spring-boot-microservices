@@ -1,6 +1,7 @@
 package com.techprimer.stock.dbservice.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,11 @@ public class DbController {
 	@GetMapping("/{id}")
 	public Stock getStockById(@PathVariable("id") int id) {
 		return repo.findById(id).get();
+	}
+	
+	@GetMapping("/{user}/stocks")
+	public List<String> getUserStocks(@PathVariable("user") String user){
+		return repo.findByUser(user).stream().map(Stock::getStockName).collect(Collectors.toList());
 	}
 	
 	@GetMapping("/all")
