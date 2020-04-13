@@ -41,7 +41,6 @@ public class StockServiceController {
 		ResponseEntity<List<String>> stocks = restExchange(user);
 		List<String> fullNames = stocks.getBody().stream().map(s -> getYahooStock(s).getName())
 				.collect(Collectors.toList());
-
 		return fullNames;
 	}
 
@@ -55,7 +54,7 @@ public class StockServiceController {
 	private Stock getYahooStock(String stockName) {
 
 		try {
-			// java.net.UnknownHostException: download.finance.yahoo.com
+			// https://query1.finance.yahoo.com/v7/finance/quote?symbols=GOOG
 			Stock stock = YahooFinance.get(stockName);
 			return stock;
 		} catch (IOException e) {
