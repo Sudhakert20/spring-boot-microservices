@@ -38,14 +38,21 @@ public class DbController {
 	
 	@GetMapping("all/{user}")
 	public List<Stock> getStockByUser(@PathVariable("user") String user) {
-		
 		return repo.findByUser(user);
 	}
 	
 	@PostMapping("/add")
 	public Stock addUserStock(@RequestBody Stock stock) {
-		
 		return repo.save(stock);
-		
 	}
+	
+	@PostMapping("/delete/{stockName}")
+	public List<Stock> deleteByStockName(@PathVariable("stockName") String stockName) {
+		List<Stock> stocks = repo.findByStockName(stockName);
+		
+		stocks.stream().forEach(s -> repo.delete(s));
+		
+		return repo.findAll();
+	}
+	
 }
