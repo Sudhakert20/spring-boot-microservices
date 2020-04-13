@@ -20,25 +20,40 @@ import yahoofinance.YahooFinance;
 @RestController
 @RequestMapping("/stock")
 public class StockServiceController {
-	
+
 	@Autowired
 	RestTemplate restTemplate;
-	
+
 	@GetMapping("/{user}")
+	public List<String> getStockByUser(@PathVariable("user") String user) {
+		ResponseEntity<List<String>> stocks = restExchange(user);
+
+		return stocks.getBody();
+	}
+
+	@GetMapping("/{user}/fullname")
 	public List<String> getStockPrice(@PathVariable("user") String user) {
-		
-		ResponseEntity<List<String>> stocks = restTemplate.exchange("http://localhost:8301/db/"+user+"/stocks", HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {});
-		//output: ["AMZN","GOOG","APPL"]
+
+		ResponseEntity<List<String>> stocks = restExchange(user);
+		// output: ["AMZN","GOOG","APPL"]
 		List<String> fullNames = stocks.getBody().stream().map(s -> getPrice(s).getName()).collect(Collectors.toList());
-		
+
 		return fullNames;
 	}
-	
+
+	private ResponseEntity<List<String>> restExchange(String user) {
+		ResponseEntity<List<String>> stocks = restTemplate.exchange("http://localhost:8301/db/" + user + "/stocks",
+				HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+				});
+		return stocks;
+	}
+
 	private Stock getPrice(String stockName) {
-		
+
 		try {
-			//Sending request: http://download.finance.yahoo.com/d/quotes.csv?s=GOOG&f=nsc4xab2sa5sbb3sb6sl1sk3sd1t1opghva2kjm3m4sj2sss1sj1sf6sr1qdyee7e9e8rr5p6p5b4s6j4t8s7&e=.csv
-			//java.net.UnknownHostException: download.finance.yahoo.com
+			// Sending request:
+			// http://download.finance.yahoo.com/d/quotes.csv?s=GOOG&f=nsc4xab2sa5sbb3sb6sl1sk3sd1t1opghva2kjm3m4sj2sss1sj1sf6sr1qdyee7e9e8rr5p6p5b4s6j4t8s7&e=.csv
+			// java.net.UnknownHostException: download.finance.yahoo.com
 			Stock stock = YahooFinance.get(stockName);
 			return stock;
 		} catch (IOException e) {
@@ -46,5 +61,5 @@ public class StockServiceController {
 		}
 		return null;
 	}
-	
+
 }

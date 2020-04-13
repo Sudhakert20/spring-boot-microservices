@@ -12,8 +12,6 @@ public interface DbServiceRepository extends JpaRepository<Stock, Integer>{
 
 	List<Stock> findByUser(String user);
 
-	void deleteByStockName(String stockName);
-
 	List<Stock> findByStockName(String stockName);
 
 }
