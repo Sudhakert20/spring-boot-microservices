@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.techprimer.stock.stockservice.model.StockDetails;
 
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
@@ -26,29 +27,48 @@ public class StockServiceController {
 	@Autowired
 	RestTemplate restTemplate;
 
-	@HystrixCommand(fallbackMethod = "yahooFallback", commandKey="stock", groupKey="stockGroup")
+	@HystrixCommand(fallbackMethod = "yahooFallback", commandKey = "stock", groupKey = "stockGroup")
 	@GetMapping("/{user}")
 	public List<String> getStockByUser(@PathVariable("user") String user) {
-		ResponseEntity<List<String>> stocks = restExchange(user);
-
-		return stocks.getBody();
+		return restExchange(user);
 	}
 
-	@HystrixCommand(fallbackMethod = "yahooFallback", commandKey="yahoo", groupKey="yahooGroup")
+	@HystrixCommand(fallbackMethod = "yahooFallback", commandKey = "yahoo", groupKey = "yahooGroup")
 	@GetMapping("/{user}/fullname")
 	public List<String> getStockPrice(@PathVariable("user") String user) {
 
-		ResponseEntity<List<String>> stocks = restExchange(user);
-		List<String> fullNames = stocks.getBody().stream().map(s -> getYahooStock(s).getName())
-				.collect(Collectors.toList());
+		List<String> stocks = restExchange(user);
+		List<String> fullNames = stocks.stream().map(s -> getYahooStock(s).getName()).collect(Collectors.toList());
 		return fullNames;
 	}
 
-	private ResponseEntity<List<String>> restExchange(String user) {
-		ResponseEntity<List<String>> stocks = restTemplate.exchange("http://localhost:8301/db/" + user + "/stocks",
+	@GetMapping("/{user}/details")
+	public List<StockDetails> getStockDetails(@PathVariable("user") String user) {
+
+		List<String> dbStocks = restExchange(user);
+
+		// Error: The method map(Function<? super String,? extends R>) in the type
+		// Stream<String> is not applicable for the arguments ((<no type> s) -> {})
+		// Fix: missed return keyword inside map interface.
+		List<StockDetails> stockDetails = dbStocks.stream().map(s -> {
+			Stock stock = getYahooStock(s);
+			return new StockDetails(stock.getSymbol(), stock.getName(), stock.getStockExchange(),
+					stock.getQuote().getPrice(), stock.getQuote().getPreviousClose(), stock.getQuote().getOpen(),
+					stock.getQuote().getDayLow(), stock.getQuote().getDayHigh(), stock.getQuote().getYearLow(),
+					stock.getQuote().getYearHigh());
+		}).collect(Collectors.toList());
+
+		return stockDetails;
+	}
+
+	private List<String> restExchange(String user) {
+		// Error: java.lang.IllegalStateException: No instances available for localhost
+		// Fix: When you use a @LoadBalanced RestTemplate the hostname needs to be a
+		// serviceId not an actual hostname
+		ResponseEntity<List<String>> stocks = restTemplate.exchange("http://db-service/db/" + user + "/stocks",
 				HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
 				});
-		return stocks;
+		return stocks.getBody();
 	}
 
 	private Stock getYahooStock(String stockName) {
