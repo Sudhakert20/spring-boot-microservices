@@ -1,0 +1,33 @@
+<p>stock works!</p>
+
+User Name: <input type="text" #userName/>
+
+<button (click) = "retrieve(userName)">Retrieve</button>
+
+<p></p>
+<div *ngIf="data">
+     <table border="1">
+	  <tr>
+		  <th>Stock Name</th>
+		  <th>FINRA Name</th>
+		  <th>Price</th>
+		  <th>Previous Day Close</th>
+		  <th>Open Price</th>
+		  <th>Day's Low</th>
+		  <th>Day's High</th>
+		  <th>52 Week Low</th>
+		  <th>52 Week High</th>
+	  </tr>
+	  <tr *ngFor="let q of data"> 
+		  <td>{{q.symbol}}</td>
+		  <td>{{q.name}}</td>
+		  <td>{{q.price}}</td>
+		  <td>{{q.previousClose}}</td>
+		  <td>{{q.open}}</td>
+		  <td>{{q.dayLow}}</td>
+		  <td>{{q.dayHigh}}</td>
+		  <td>{{q.yearLow}}</td>
+		  <td>{{q.yearHigh}}</td>
+	   </tr>
+  </table>
+</div>

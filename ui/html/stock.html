@@ -6,7 +6,7 @@
 
 <div ng-app="myApp" ng-controller="myCtrl as ctrl">
   <p>Username : <input type="text" ng-model="name"></p>
-   <p>FINRA code : <input type="text" ng-model="quote"></p>
+  <p>FINRA code : <input type="text" ng-model="quote"></p>
 
   <button ng-click="ctrl.add();" name="button"  type="button">Add</button>
   <button ng-click="ctrl.retrieve();" name="button" type="button">Retrieve Price</button>
@@ -14,28 +14,28 @@
 
   <br></br>
   <table border="1">
-  <tr>
-  	<th>FINRA Name</th>
-  <th>Stock Name</th>
-  <th>Price</th>
-  <th>Previous Day Close</th>
-  <th>Open Price</th>
-  <th>Day's Low</th>
-  <th>Day's High</th>
-  <th>52 Week Low</th>
-  <th>52 Week High</th>
-  </tr>
-  <tr ng-repeat="q in quotes"> 
-  	<td>{{q.symbol}}</td>
-  	<td>{{q.name}}</td>
-  	<td>{{q.price}}</td>
-  	<td>{{q.previousClose}}</td>
-  	<td>{{q.open}}</td>
-  	<td>{{q.dayLow}}</td>
-  	<td>{{q.dayHigh}}</td>
-  	<td>{{q.yearLow}}</td>
-  	<td>{{q.yearHigh}}</td>
-   	</tr>
+	  <tr>
+		  <th>Stock Name</th>
+		  <th>FINRA Name</th>
+		  <th>Price</th>
+		  <th>Previous Day Close</th>
+		  <th>Open Price</th>
+		  <th>Day's Low</th>
+		  <th>Day's High</th>
+		  <th>52 Week Low</th>
+		  <th>52 Week High</th>
+	  </tr>
+	  <tr ng-repeat="q in quotes"> 
+		  <td>{{q.symbol}}</td>
+		  <td>{{q.name}}</td>
+		  <td>{{q.price}}</td>
+		  <td>{{q.previousClose}}</td>
+		  <td>{{q.open}}</td>
+		  <td>{{q.dayLow}}</td>
+		  <td>{{q.dayHigh}}</td>
+		  <td>{{q.yearLow}}</td>
+		  <td>{{q.yearHigh}}</td>
+	   </tr>
   </table>
 
 
