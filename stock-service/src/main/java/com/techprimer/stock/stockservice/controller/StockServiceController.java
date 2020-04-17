@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +21,9 @@ import com.techprimer.stock.stockservice.model.StockDetails;
 import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
+//Error in UI: Access to XMLHttpRequest at 'http://127.0.0.1:8300/api/stock-service/stock/sam/details' from origin 'null' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+//Fix: @CrossOrigin
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/stock")
 public class StockServiceController {
