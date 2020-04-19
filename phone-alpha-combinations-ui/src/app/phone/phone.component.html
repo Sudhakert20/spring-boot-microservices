@@ -1,0 +1,14 @@
+
+Enter Phone Number: <input type="text" #phoneNumber/>
+<p></p>
+<button (click)="find(phoneNumber)">Find Combinations</button>
+
+<p></p>
+
+<p>{{result?.totalCount}}</p>
+<p>{{result?.pageNo}}</p>
+<p>{{result?.totalPages}}</p>
+<div *ngFor="let c of result.combinations">
+{{c}}
+
+</div>

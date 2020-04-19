@@ -7,10 +7,10 @@ import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +19,7 @@ import com.finra.assignment.phonenumberalphanumericcombinations.exception.Invali
 import com.finra.assignment.phonenumberalphanumericcombinations.model.Combination;
 import com.finra.assignment.phonenumberalphanumericcombinations.service.PhoneNumberAlphaNumericCombinationsService;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/finra")
 @Validated
@@ -32,7 +33,7 @@ public class PhoneNumberAlphaNumericCombinationsController {
 		return "Hello FINRA";
 	}
 
-	@PostMapping("/{number}")
+	@GetMapping("/{number}")
 	public Combination getCombinations(@PathVariable("number") @Size(min = 7, max = 10) String number,
 			@RequestParam(value = "page", required = false) Integer page) throws InvalidPhoneNumberException {
 
@@ -47,7 +48,7 @@ public class PhoneNumberAlphaNumericCombinationsController {
 		List<Combination> combs = new ArrayList<>();
 		int pages = count % 10 == 0 ? count / 10 : (count / 10) + 1;
 		
-		if(page !=null && page <=0 || page >pages)
+		if(page !=null && (page <=0 || page >pages))
 			throw new ArrayIndexOutOfBoundsException("Please provide page between 1 and " + pages);
 		
 		int c = 0;
