@@ -46,14 +46,14 @@ public class PhoneNumberAlphaNumericCombinationsController {
 
 		int count = combinations.size();
 		List<Combination> combs = new ArrayList<>();
-		int pages = count % 10 == 0 ? count / 10 : (count / 10) + 1;
+		int pages = count % 50 == 0 ? count / 50 : (count / 50) + 1;
 		
 		if(page !=null && (page <=0 || page >pages))
 			throw new ArrayIndexOutOfBoundsException("Please provide page between 1 and " + pages);
 		
 		int c = 0;
 		for (int i = 0; i < pages; i++) {
-			int toIndex = c + 10 > count ? count : c + 10;
+			int toIndex = c + 50 > count ? count : c + 50;
 			combs.add(new Combination(count, (i + 1), pages, combinations.subList(c, toIndex)));
 			c = toIndex;
 		}
