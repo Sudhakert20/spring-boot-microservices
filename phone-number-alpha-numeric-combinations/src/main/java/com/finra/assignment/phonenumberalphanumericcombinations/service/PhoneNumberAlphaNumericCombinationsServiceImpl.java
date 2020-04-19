@@ -5,19 +5,25 @@ import java.util.List;
 
 import javax.validation.constraints.Size;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import com.finra.assignment.phonenumberalphanumericcombinations.model.Combination;
+import com.finra.assignment.phonenumberalphanumericcombinations.repository.PhoneNumberAlphaNumericCombinationsRepository;
 
 @Service
 public class PhoneNumberAlphaNumericCombinationsServiceImpl implements PhoneNumberAlphaNumericCombinationsService {
 
-	@Override
-	public List<String> getCombinations(@Size(min = 7, max = 10) String number) {
+	@Autowired
+	PhoneNumberAlphaNumericCombinationsRepository repository;
 
-		// Gives all the possible alpha numeric combinations of given number.
+	@Override
+	public Page<Combination> getCombinations(@Size(min = 7, max = 10) String number, Pageable pageable) {
+
 		int size = number.length();
-		
 		List<String> combinations = new ArrayList<>();
-		
 		List<String> temp = new ArrayList<>();
 
 		String[] keypad = { "", "", "ABC", "DEF", "GHI", "JKL", "MNO", "PQRS", "TUV", "WXYZ" };
@@ -45,33 +51,9 @@ public class PhoneNumberAlphaNumericCombinationsServiceImpl implements PhoneNumb
 			temp.addAll(combinations);
 		}
 
-		return combinations;
-	}
+		combinations.forEach(a -> repository.save(new Combination(null, a)));
 
-	// brute force approach to find all the mnemonics(alpha only)(not alpha numeric)
-	// of given phone number.
-	//call or change access of getMnemonics(number, keypad) to get Mnemonic values;
-	@SuppressWarnings("unused")
-	private void getMnemonics(String number, String[] keypad) {
-		char[] partials = new char[number.length()];
-		List<String> mnemonics = new ArrayList<>();
-		phoneMnemonicsHelper(number, keypad, 0, partials, mnemonics);
-		System.out.println("Size: " + mnemonics.size() + " => Mnemonics to return: " + mnemonics);
-	}
-
-	private void phoneMnemonicsHelper(@Size(min = 7, max = 10) String number, String[] keypad, int digit,
-			char[] partials, List<String> mnemonics) {
-
-		if (digit == number.length()) {
-			mnemonics.add(new String(partials));
-		} else {
-			for (int i = 0; i < keypad[number.charAt(digit) - '0'].length(); i++) {
-				char c = keypad[number.charAt(digit) - '0'].charAt(i);
-				partials[digit] = c;
-				phoneMnemonicsHelper(number, keypad, digit + 1, partials, mnemonics);
-			}
-		}
-
+		return repository.findAll(pageable);
 	}
 
 }

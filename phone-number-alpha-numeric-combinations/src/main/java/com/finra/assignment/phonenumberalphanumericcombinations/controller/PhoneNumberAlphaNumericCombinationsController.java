@@ -1,18 +1,16 @@
 package com.finra.assignment.phonenumberalphanumericcombinations.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.validation.constraints.Size;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.finra.assignment.phonenumberalphanumericcombinations.exception.InvalidPhoneNumberException;
@@ -34,31 +32,17 @@ public class PhoneNumberAlphaNumericCombinationsController {
 	}
 
 	@GetMapping("/{number}")
-	public Combination getCombinations(@PathVariable("number") @Size(min = 7, max = 10) String number,
-			@RequestParam(value = "page", required = false) Integer page) throws InvalidPhoneNumberException {
+	public Page<Combination> getCombinations(@PathVariable("number") @Size(min = 7, max = 10) String number,
+			Pageable pageable) throws InvalidPhoneNumberException {
 
 		int size = number.length();
 		if (size == 8 || size == 9) {
 			throw new InvalidPhoneNumberException("Pleae Enter a valid 7 or 10 digit phone number.");
 		}
 
-		List<String> combinations = service.getCombinations(number);
-
-		int count = combinations.size();
-		List<Combination> combs = new ArrayList<>();
-		int pages = count % 50 == 0 ? count / 50 : (count / 50) + 1;
+		Page<Combination> combinations = service.getCombinations(number, pageable);
 		
-		if(page !=null && (page <=0 || page >pages))
-			throw new ArrayIndexOutOfBoundsException("Please provide page between 1 and " + pages);
-		
-		int c = 0;
-		for (int i = 0; i < pages; i++) {
-			int toIndex = c + 50 > count ? count : c + 50;
-			combs.add(new Combination(count, (i + 1), pages, combinations.subList(c, toIndex)));
-			c = toIndex;
-		}
-		
-		return page == null ? combs.isEmpty() ? null : combs.get(0) : combs.get(page - 1);
+		return combinations;
 	}
 	
 	@ExceptionHandler(InvalidPhoneNumberException.class)

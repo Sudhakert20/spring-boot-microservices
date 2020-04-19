@@ -1,53 +1,44 @@
 package com.finra.assignment.phonenumberalphanumericcombinations.model;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-
+@Entity
+@Table(name="combinations")
 public class Combination {
 
-	private int totalCount;
-	private int pageNo;
-	private int totalPages;
-	private List<String> combinations;
-	
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private Long id;
+	private String value;
+
 	public Combination() {
 		super();
 	}
-	
-	public Combination(int totalCount, int pageNo, int totalPages, List<String> combinations) {
+
+	public Combination(Long id, String value) {
 		super();
-		this.totalCount = totalCount;
-		this.pageNo = pageNo;
-		this.totalPages = totalPages;
-		this.combinations = combinations;
+		this.id = id;
+		this.value = value;
 	}
 
-	public int getTotalCount() {
-		return totalCount;
-	}
-	public void setTotalCount(int totalCount) {
-		this.totalCount = totalCount;
-	}
-	
-	public int getPageNo() {
-		return pageNo;
-	}
-	public void setPageNo(int pageNo) {
-		this.pageNo = pageNo;
-	}
-	
-	public List<String> getCombinations() {
-		return combinations;
-	}
-	public void setCombinations(List<String> combinations) {
-		this.combinations = combinations;
+	public Long getId() {
+		return id;
 	}
 
-	public int getTotalPages() {
-		return totalPages;
+	public void setId(Long id) {
+		this.id = id;
 	}
-	public void setTotalPages(int totalPages) {
-		this.totalPages = totalPages;
+
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
 	}
 
 }
