@@ -58,7 +58,7 @@ public class PhoneNumberAlphaNumericCombinationsController {
 			c = toIndex;
 		}
 		
-		return page == null ? combs.get(0) : combs.get(page - 1);
+		return page == null ? combs.isEmpty() ? null : combs.get(0) : combs.get(page - 1);
 	}
 	
 	@ExceptionHandler(InvalidPhoneNumberException.class)
