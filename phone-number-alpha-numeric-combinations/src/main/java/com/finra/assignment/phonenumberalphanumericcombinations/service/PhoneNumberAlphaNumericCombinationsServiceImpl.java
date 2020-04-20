@@ -31,13 +31,13 @@ public class PhoneNumberAlphaNumericCombinationsServiceImpl implements PhoneNumb
 		List<String> mnemonics = new ArrayList<>();
 		List<String> temp = new ArrayList<>();
 
-		String[] keypad = { "", "", "ABC", "DEF", "GHI", "JKL", "MNO", "PQRS", "TUV", "WXYZ" };
+		String[] keypad = { "0", "1", "ABC", "DEF", "GHI", "JKL", "MNO", "PQRS", "TUV", "WXYZ" };
 
 		StringBuilder str = new StringBuilder(number);
 		for (int i = size - 1; i >= 0; i--) {
 			int index = Character.getNumericValue(number.charAt(i));
 			String key = keypad[index];
-			if (i == size - 1 || temp.isEmpty()) {
+			if (i == size - 1) {
 				for (char ch : key.toCharArray()) {
 					str.setCharAt(i, ch);
 					mnemonics.add(str.toString());
