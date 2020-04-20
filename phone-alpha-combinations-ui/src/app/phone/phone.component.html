@@ -1,14 +1,30 @@
 
-Enter Phone Number: <input type="text" #phoneNumber/>
+<h1>Phone Number Alpha Numeric Combinations: </h1>
+
+Enter Phone Number: <input required type="text" #phoneNumber/>
 <p></p>
-<button (click)="find(phoneNumber)">Find Combinations</button>
+<button class="btn btn-primary" (click)="find(phoneNumber)">Find Combinations</button>
 
 <p></p>
 
-<p>{{result?.totalCount}}</p>
-<p>{{result?.pageNo}}</p>
-<p>{{result?.totalPages}}</p>
-<div *ngFor="let c of result.combinations">
-{{c}}
-
+<div *ngIf="result">
+    <p>Page Number: {{result.number}}</p>
+    <p>Total Pages: {{result.totalPages}}</p>
+    <p>Contents in this page: {{result.numberOfElements}}</p>
+    <p>Contents per page: {{result.size}}</p>
+    <p>Total Contents: {{result.totalElements}}</p>
+    <div *ngIf="result.content">
+            <table border="1">
+                <tr>
+                    <th>Combination</th>
+                </tr>
+                <tr *ngFor="let c of result.content">
+                    <td>{{c.combination}}</td>
+                </tr>
+            </table>
+    </div>
+    <p></p>
+    Enter Page Number: <input required type="text" #pageNumber/>
+    <p></p>
+    <button class="btn btn-primary" (click)="findByPage(pageNumber)">Find Page Contents</button>
 </div>

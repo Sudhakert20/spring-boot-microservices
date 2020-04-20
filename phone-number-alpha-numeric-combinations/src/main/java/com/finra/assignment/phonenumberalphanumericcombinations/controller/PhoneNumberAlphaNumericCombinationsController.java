@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.finra.assignment.phonenumberalphanumericcombinations.exception.InvalidPhoneNumberException;
-import com.finra.assignment.phonenumberalphanumericcombinations.model.Combination;
+import com.finra.assignment.phonenumberalphanumericcombinations.exception.PageOutOfBoundException;
+import com.finra.assignment.phonenumberalphanumericcombinations.model.Combinations;
 import com.finra.assignment.phonenumberalphanumericcombinations.service.PhoneNumberAlphaNumericCombinationsService;
 
 @CrossOrigin("*")
@@ -32,7 +33,7 @@ public class PhoneNumberAlphaNumericCombinationsController {
 	}
 
 	@GetMapping("/{number}")
-	public Page<Combination> getCombinations(@PathVariable("number") @Size(min = 7, max = 10) String number,
+	public Page<Combinations> getCombinations(@PathVariable("number") @Size(min = 7, max = 10) String number,
 			Pageable pageable) throws InvalidPhoneNumberException {
 
 		int size = number.length();
@@ -40,18 +41,39 @@ public class PhoneNumberAlphaNumericCombinationsController {
 			throw new InvalidPhoneNumberException("Pleae Enter a valid 7 or 10 digit phone number.");
 		}
 
-		Page<Combination> combinations = service.getCombinations(number, pageable);
-		
+		try {
+			Long.parseLong(number);
+		} catch (NumberFormatException e) {
+			throw new NumberFormatException(
+					number + " is not valid entry. Please enter a valid 7 or 10 digit phone number");
+		}
+
+		Page<Combinations> combinations = service.getCombinations(number, pageable);
+
+		if (combinations.getTotalPages() < pageable.getPageNumber())
+			throw new PageOutOfBoundException(
+					"Please enter a valid pagge number below or equal to " + combinations.getTotalPages());
+
 		return combinations;
 	}
-	
+
 	@ExceptionHandler(InvalidPhoneNumberException.class)
 	public String handleInvalidPhoneNumberException(InvalidPhoneNumberException e) {
 		return e.getMessage();
 	}
-	
+
 	@ExceptionHandler
 	public String handleArraysIndexOutOfBoundsException(ArrayIndexOutOfBoundsException e) {
+		return e.getMessage();
+	}
+
+	@ExceptionHandler
+	public String handleNumberFormatException(NumberFormatException e) {
+		return e.getMessage();
+	}
+
+	@ExceptionHandler
+	public String handlePageOutOfBoundException(PageOutOfBoundException e) {
 		return e.getMessage();
 	}
 

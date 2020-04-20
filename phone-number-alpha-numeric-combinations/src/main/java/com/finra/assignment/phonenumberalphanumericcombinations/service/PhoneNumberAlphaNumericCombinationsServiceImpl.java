@@ -10,7 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.finra.assignment.phonenumberalphanumericcombinations.model.Combination;
+import com.finra.assignment.phonenumberalphanumericcombinations.model.Combinations;
 import com.finra.assignment.phonenumberalphanumericcombinations.repository.PhoneNumberAlphaNumericCombinationsRepository;
 
 @Service
@@ -20,10 +20,15 @@ public class PhoneNumberAlphaNumericCombinationsServiceImpl implements PhoneNumb
 	PhoneNumberAlphaNumericCombinationsRepository repository;
 
 	@Override
-	public Page<Combination> getCombinations(@Size(min = 7, max = 10) String number, Pageable pageable) {
+	public Page<Combinations> getCombinations(@Size(min = 7, max = 10) String number, Pageable pageable) {
 
+		List<Combinations> list = repository.findByPhoneNumber(Long.parseLong(number));
+		if (list != null && !list.isEmpty()) {
+			return repository.findByPhoneNumber(Long.parseLong(number), pageable);
+		}
+		
 		int size = number.length();
-		List<String> combinations = new ArrayList<>();
+		List<String> mnemonics = new ArrayList<>();
 		List<String> temp = new ArrayList<>();
 
 		String[] keypad = { "", "", "ABC", "DEF", "GHI", "JKL", "MNO", "PQRS", "TUV", "WXYZ" };
@@ -35,25 +40,24 @@ public class PhoneNumberAlphaNumericCombinationsServiceImpl implements PhoneNumb
 			if (i == size - 1 || temp.isEmpty()) {
 				for (char ch : key.toCharArray()) {
 					str.setCharAt(i, ch);
-					combinations.add(str.toString());
+					mnemonics.add(str.toString());
 				}
 			} else {
 				for (String t : temp) {
 					StringBuilder s = new StringBuilder(t);
 					for (char ch : key.toCharArray()) {
 						s.setCharAt(i, ch);
-						if (!combinations.contains(s.toString()))
-							combinations.add(s.toString());
+						if (!mnemonics.contains(s.toString()))
+							mnemonics.add(s.toString());
 					}
 				}
 			}
 			temp.clear();
-			temp.addAll(combinations);
+			temp.addAll(mnemonics);
 		}
+		mnemonics.forEach(a -> repository.save(new Combinations(Long.parseLong(number), a)));
 
-		combinations.forEach(a -> repository.save(new Combination(null, a)));
-
-		return repository.findAll(pageable);
+		return repository.findByPhoneNumber(Long.parseLong(number), pageable);
 	}
 
 }

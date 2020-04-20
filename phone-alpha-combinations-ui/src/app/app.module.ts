@@ -6,6 +6,8 @@ import { AppComponent } from './app.component';
 import { PhoneComponent } from './phone/phone.component';
 
 import { HttpClientModule } from '@angular/common/http';
+import { NgxPaginationModule} from 'ngx-pagination'
+import { from } from 'rxjs';
 
 @NgModule({
   declarations: [
@@ -15,7 +17,8 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxPaginationModule
   ],
   providers: [],
   bootstrap: [AppComponent]
