@@ -7,6 +7,8 @@ Enter Phone Number: <input required type="text" #phoneNumber/>
 
 <p></p>
 
+<P *ngIf="result.error">{{result.error.error}}</P>
+
 <div *ngIf="result">
     <p>Page Number: {{result.number}}</p>
     <p>Total Pages: {{result.totalPages}}</p>
