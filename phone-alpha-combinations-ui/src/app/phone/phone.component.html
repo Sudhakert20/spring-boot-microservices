@@ -16,10 +16,7 @@
                     Phone Number is required.
                 </div>
                 <div *ngIf="number.errors?.minlength">
-                    Phone Number must be at least 7 characters long.
-                </div>
-                <div *ngIf="number.errors?.maxlength">
-                    Phone Number must be below 10 characters long.
+                    Phone Number must be a 7 or 10 characters long.
                 </div>
             </div>
         </div>
@@ -30,7 +27,6 @@
 </div>
 
 <p></p>
-{{result}}
 
 <div class="col-sm-6">
     <div *ngIf="result">
