@@ -2,6 +2,8 @@ package com.finra.assignment.phonenumberalphanumericcombinations.controller;
 
 import javax.validation.constraints.Size;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +37,9 @@ public class PhoneNumberAlphaNumericCombinationsController {
 	@GetMapping("/{number}")
 	public Page<Combinations> getCombinations(@PathVariable("number") @Size(min = 7, max = 10) String number,
 			Pageable pageable) throws InvalidPhoneNumberException {
+		
+		Logger log = LoggerFactory.getLogger(PhoneNumberAlphaNumericCombinationsController.class);
+		log.info("Finding Combinations for: " + number);
 
 		int size = number.length();
 		if (size == 8 || size == 9) {
@@ -54,6 +59,8 @@ public class PhoneNumberAlphaNumericCombinationsController {
 			throw new PageOutOfBoundException(
 					"Please enter a valid pagge number below or equal to " + combinations.getTotalPages());
 
+		log.info("Total Combinations found for: "+number + " are " + combinations.getTotalElements());
+		
 		return combinations;
 	}
 
