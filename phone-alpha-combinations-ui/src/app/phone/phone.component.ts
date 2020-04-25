@@ -10,13 +10,16 @@ export class PhoneComponent implements OnInit {
 
   result: any;
   phoneNumber: any
+
+  phone = {number: ""};
+
   constructor(private http:HttpClient) { }
 
   ngOnInit(): void {
   }
 
-  find(phoneNumber){
-    this.phoneNumber=phoneNumber.value;
+  find(number: { value: any; }){
+    this.phoneNumber=number.value;
     this.http.get('http://localhost:8200/finra/'+this.phoneNumber)
     .subscribe((data) => {
       this.result = data;
@@ -24,7 +27,7 @@ export class PhoneComponent implements OnInit {
     })
   }
 
-  findByPage(pageNumber){
+  findByPage(pageNumber: { value: string; }){
     this.http.get('http://localhost:8200/finra/'+this.phoneNumber+'?page='+pageNumber.value)
     .subscribe((data) => {
       this.result = data;

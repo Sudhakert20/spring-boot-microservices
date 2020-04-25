@@ -1,32 +1,57 @@
-
 <h1>Phone Number Alpha Numeric Combinations: </h1>
 
-Enter Phone Number: <input required type="text" #phoneNumber/>
 <p></p>
-<button class="btn btn-primary" (click)="find(phoneNumber)">Find Combinations</button>
+<div class="col-sm-6">
+    <form #phoneForm="ngForm" appIdentityRevealed>
+        <div class="cross-validation"
+            [class.cross-validation-error]="phoneForm.errors?.identityRevealed && (phoneForm.touched || phoneForm.dirty)">
+            <div class="form-group">
+
+                <label for="number">Enter Phone Number: </label>
+
+                <input id="number" name="number" class="form-control" required minlength="7" maxlength="10" [(ngModel)]="phone.number"
+                    #number="ngModel">
+
+                <div *ngIf="number.errors?.required">
+                    Phone Number is required.
+                </div>
+                <div *ngIf="number.errors?.minlength">
+                    Phone Number must be at least 7 characters long.
+                </div>
+                <div *ngIf="number.errors?.maxlength">
+                    Phone Number must be below 10 characters long.
+                </div>
+            </div>
+        </div>
+        <p></p>
+        <button type="submit" class="btn btn-default" [disabled]="phoneForm.invalid" (click)="find(number)">Submit</button>
+
+    </form>
+</div>
 
 <p></p>
+{{result}}
 
-<P *ngIf="result.error">{{result.error.error}}</P>
-
-<div *ngIf="result">
-    <p>Page Number: {{result.number}}</p>
-    <p>Total Pages: {{result.totalPages}}</p>
-    <p>Contents in this page: {{result.numberOfElements}}</p>
-    <p>Contents per page: {{result.size}}</p>
-    <p>Total Contents: {{result.totalElements}}</p>
-    <div *ngIf="result.content">
+<div class="col-sm-6">
+    <div *ngIf="result">
+        <p>Page Number: {{result.number}}</p>
+        <p>Total Pages: {{result.totalPages}}</p>
+        <p>Contents in this page: {{result.numberOfElements}}</p>
+        <p>Contents per page: {{result.size}}</p>
+        <p>Total Contents: {{result.totalElements}}</p>
+        <div *ngIf="result.content">
             <table border="1">
                 <tr>
-                    <th>Combination</th>
+                    <th>Combinations</th>
                 </tr>
                 <tr *ngFor="let c of result.content">
                     <td>{{c.combination}}</td>
                 </tr>
             </table>
+        </div>
+        <p></p>
+        Enter Page Number: <input required type="text" #pageNumber />
+        <p></p>
+        <button class="btn btn-primary" (click)="findByPage(pageNumber)">Find Page Contents</button>
     </div>
-    <p></p>
-    Enter Page Number: <input required type="text" #pageNumber/>
-    <p></p>
-    <button class="btn btn-primary" (click)="findByPage(pageNumber)">Find Page Contents</button>
 </div>
