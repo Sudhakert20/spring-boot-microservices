@@ -16,28 +16,59 @@ import com.finra.assignment.phonenumberalphanumericcombinations.repository.Phone
 @Service
 public class PhoneNumberAlphaNumericCombinationsServiceImpl implements PhoneNumberAlphaNumericCombinationsService {
 
+	public static final String[] keypad = { "0", "1", "ABC", "DEF", "GHI", "JKL", "MNO", "PQRS", "TUV", "WXYZ" };
+
 	@Autowired
 	PhoneNumberAlphaNumericCombinationsRepository repository;
 
 	@Override
 	public Page<Combinations> getCombinations(@Size(min = 7, max = 10) String number, Pageable pageable) {
 
-		List<Combinations> list = repository.findByPhoneNumber(Long.parseLong(number));
+		long num = Long.parseLong(number);
+		List<Combinations> list = repository.findByPhoneNumber(num);
 		if (list != null && !list.isEmpty()) {
-			return repository.findByPhoneNumber(Long.parseLong(number), pageable);
+			return repository.findByPhoneNumber(num, pageable);
 		}
-		
-		int size = number.length();
+
 		List<String> mnemonics = new ArrayList<>();
+
+		getMnemonics(number, mnemonics);
+		// getAlphaNumericMnemonics(number, mnemonics);
+
+		mnemonics.forEach(a -> repository.save(new Combinations(num, a)));
+
+		return repository.findByPhoneNumber(num, pageable);
+	}
+
+	// brute force approach to find all the mnemonics of given phone number.
+	public List<String> getMnemonics(String number, List<String> mnemonics) {
+		char[] partials = number.toCharArray();
+		phoneMnemonicsHelper(number, 0, partials, mnemonics);
+		return mnemonics;
+	}
+
+	private void phoneMnemonicsHelper(String number, int digit, char[] partials, List<String> mnemonics) {
+
+		if (digit == number.length()) {
+			mnemonics.add(new String(partials));
+		} else {
+			for (int i = 0; i < keypad[number.charAt(digit) - '0'].length(); i++) {
+				char c = keypad[number.charAt(digit) - '0'].charAt(i);
+				partials[digit] = c;
+				phoneMnemonicsHelper(number, digit + 1, partials, mnemonics);
+			}
+		}
+
+	}
+
+	public List<String> getAlphaNumericMnemonics(String number, List<String> mnemonics) {
 		List<String> temp = new ArrayList<>();
-
-		String[] keypad = { "0", "1", "ABC", "DEF", "GHI", "JKL", "MNO", "PQRS", "TUV", "WXYZ" };
-
 		StringBuilder str = new StringBuilder(number);
-		for (int i = size - 1; i >= 0; i--) {
+
+		for (int i = number.length() - 1; i >= 0; i--) {
 			int index = Character.getNumericValue(number.charAt(i));
 			String key = keypad[index];
-			if (i == size - 1) {
+			if (i == number.length() - 1) {
 				for (char ch : key.toCharArray()) {
 					str.setCharAt(i, ch);
 					mnemonics.add(str.toString());
@@ -55,9 +86,7 @@ public class PhoneNumberAlphaNumericCombinationsServiceImpl implements PhoneNumb
 			temp.clear();
 			temp.addAll(mnemonics);
 		}
-		mnemonics.forEach(a -> repository.save(new Combinations(Long.parseLong(number), a)));
-
-		return repository.findByPhoneNumber(Long.parseLong(number), pageable);
+		return mnemonics;
 	}
 
 }

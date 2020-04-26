@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,7 +22,6 @@ import com.finra.assignment.phonenumberalphanumericcombinations.service.PhoneNum
 @CrossOrigin("*")
 @RestController
 @RequestMapping("/finra")
-@Validated
 public class PhoneNumberAlphaNumericCombinationsController {
 
 	@Autowired
@@ -50,7 +48,7 @@ public class PhoneNumberAlphaNumericCombinationsController {
 			Long.parseLong(number);
 		} catch (NumberFormatException e) {
 			throw new NumberFormatException(
-					number + " is not valid entry. Please enter a valid 7 or 10 digit phone number");
+					number + " is not valid entry. Please enter a valid 7 or 10 digit phone number.");
 		}
 
 		Page<Combinations> combinations = service.getCombinations(number, pageable);
