@@ -83,11 +83,11 @@ public class PhoneAlphaCombinationControllerTest {
 
 		Mockito.when(repository.findByPhoneNumber(1111112L)).thenReturn(combs);
 
-		int pageNumber = 1;
+		int pageNumber = 0;
 		int pageSize = 1;
 		Pageable pageable = PageRequest.of(pageNumber, pageSize);
 		Page<Combinations> pagedTasks = new PageImpl<>(combs);
-		Mockito.when(this.repository.findByPhoneNumber(1111112L, pageable)).thenReturn(pagedTasks);
+		Mockito.when(repository.findByPhoneNumber(1111112L, pageable)).thenReturn(pagedTasks);
 
 		mvc.perform(MockMvcRequestBuilders.get("/finra/1111112")).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.jsonPath("$['pageable']['paged']").value("true"))
