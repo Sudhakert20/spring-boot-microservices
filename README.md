@@ -13,3 +13,7 @@
 1. Service take input phone number and gives the Mnemonic combinations.
 2. Has UI developed using angular9 to enter input and hit the rest service.
 3. Has couple of Test cases implemented.
+
+=>Consuming Github api
+1. Service implemented to consume github api which returns single object.
+2. Used convertValue of ObjectMapper class to display customized output.
