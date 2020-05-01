@@ -12,6 +12,17 @@ public class Worldbank extends BaseEntity{
 	private String capitalCity;
 	private String longitude;
 	private String latitude;
+	
+	public Worldbank() {
+		super();
+	}
+
+	public Worldbank(String name, String capitalCity) {
+		super();
+		this.name = name;
+		this.capitalCity = capitalCity;
+	}
+	
 	public String getName() {
 		return name;
 	}

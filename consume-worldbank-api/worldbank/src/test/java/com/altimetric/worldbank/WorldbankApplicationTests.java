@@ -6,16 +6,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import com.altimetric.worldbank.model.CountryWithCapitalCity;
 import com.altimetric.worldbank.model.Worldbank;
 import com.altimetric.worldbank.service.WorldbankService;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
 class WorldbankApplicationTests {
 
@@ -23,7 +19,9 @@ class WorldbankApplicationTests {
 	WorldbankService service;
 
 	@Test
-	void contextLoads() {
+	public void testTotalCountries() {
+		int totalCountries = service.getAllWorldbankDetails().size();
+		assertEquals(304, totalCountries);
 	}
 
 	@Test
@@ -38,16 +36,16 @@ class WorldbankApplicationTests {
 
 	@Test
 	public void testCountryWithCapitalCity() {
-		List<CountryWithCapitalCity> country =  service.getWorldBankCountriesWithCapitalCity("Aruba", true);
-		
+		List<Worldbank> country = service.getWorldBankCountriesWithCapitalCity("Aruba", true, false, false);
+
 		assertTrue(!country.isEmpty());
-		
+
 		boolean isPresent = true;
-		
-		isPresent = country.stream().anyMatch(c -> c.getCountryName().equalsIgnoreCase("Aruba"));
-		
+
+		isPresent = country.stream().anyMatch(c -> c.getName().equalsIgnoreCase("Aruba"));
+
 		assertTrue(!isPresent);
-		
+
 	}
 
 }

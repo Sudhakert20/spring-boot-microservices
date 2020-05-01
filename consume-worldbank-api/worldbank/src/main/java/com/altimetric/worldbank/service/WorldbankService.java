@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.altimetric.worldbank.model.CountryWithCapitalCity;
 import com.altimetric.worldbank.model.Header;
 import com.altimetric.worldbank.model.Worldbank;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -60,42 +59,7 @@ public class WorldbankService {
 		return country.isPresent() ? country.get() : null;
 	}
 
-	public List<CountryWithCapitalCity> getWorldBankCountriesWithCapitalCity(String name, boolean regionSelected) {
-
-		List<Worldbank> mainList = this.getAllWorldbankDetails();
-
-		Optional<Worldbank> country = mainList.stream().filter(c -> c.getName().equalsIgnoreCase(name)).findFirst();
-
-		String region = "";
-
-		if (country.isPresent()) {
-			region = country.get().getRegion().getValue();
-		}
-
-		List<Worldbank> resultList = new ArrayList<Worldbank>();
-
-		for (Worldbank c : mainList) {
-			if (regionSelected && region.equalsIgnoreCase(c.getRegion().getValue())
-					&& !c.getName().equalsIgnoreCase(country.get().getName()))
-				resultList.add(c);
-		}
-
-		List<CountryWithCapitalCity> countryWithCapitalList = new ArrayList<CountryWithCapitalCity>();
-
-		for (Worldbank r : resultList) {
-
-			CountryWithCapitalCity cwc = new CountryWithCapitalCity();
-			cwc.setCapitalCityName(r.getCapitalCity());
-			cwc.setCountryName(r.getName());
-
-			countryWithCapitalList.add(cwc);
-		}
-
-		return countryWithCapitalList;
-
-	}
-
-	public List<CountryWithCapitalCity> getWorldBankCountriesWithCapitalCity(String name, boolean regionSelected,
+	public List<Worldbank> getWorldBankCountriesWithCapitalCity(String name, boolean regionSelected,
 			boolean incomeLevelSelected, boolean lendingTypeSelected) {
 
 		List<Worldbank> mainList = this.getAllWorldbankDetails();
@@ -106,45 +70,56 @@ public class WorldbankService {
 		String incomeLevel = "";
 		String lendingType = "";
 
+		List<Worldbank> resultList = new ArrayList<Worldbank>();
+
 		if (country.isPresent()) {
+
 			region = country.get().getRegion().getValue();
 			incomeLevel = country.get().getIncomeLevel().getValue();
 			lendingType = country.get().getLendingType().getValue();
+
+			for (Worldbank c : mainList) {
+
+				if (!c.getName().equalsIgnoreCase(country.get().getName())) {
+
+					if (regionSelected && incomeLevelSelected && lendingTypeSelected
+							&& region.equalsIgnoreCase(c.getRegion().getValue())
+							&& incomeLevel.equalsIgnoreCase(c.getIncomeLevel().getValue())
+							&& lendingType.equalsIgnoreCase(c.getLendingType().getValue()))
+						resultList.add(c);
+
+					else if (regionSelected && incomeLevelSelected && !lendingTypeSelected
+							&& region.equalsIgnoreCase(c.getRegion().getValue())
+							&& incomeLevel.equalsIgnoreCase(c.getIncomeLevel().getValue()))
+						resultList.add(c);
+
+					else if (regionSelected && !incomeLevelSelected && lendingTypeSelected
+							&& region.equalsIgnoreCase(c.getRegion().getValue())
+							&& lendingType.equalsIgnoreCase(c.getLendingType().getValue()))
+						resultList.add(c);
+
+					else if (!regionSelected && incomeLevelSelected && lendingTypeSelected
+							&& incomeLevel.equalsIgnoreCase(c.getIncomeLevel().getValue())
+							&& lendingType.equalsIgnoreCase(c.getLendingType().getValue()))
+						resultList.add(c);
+
+					else if (regionSelected && !incomeLevelSelected && !lendingTypeSelected
+							&& region.equalsIgnoreCase(c.getRegion().getValue()))
+						resultList.add(c);
+
+					else if (!regionSelected && incomeLevelSelected && !lendingTypeSelected
+							&& incomeLevel.equalsIgnoreCase(c.getIncomeLevel().getValue()))
+						resultList.add(c);
+
+					else if (!regionSelected && !incomeLevelSelected && lendingTypeSelected
+							&& lendingType.equalsIgnoreCase(c.getLendingType().getValue()))
+						resultList.add(c);
+
+				}
+			}
 		}
 
-		List<Worldbank> resultList = new ArrayList<Worldbank>();
-
-		for (Worldbank c : mainList) {
-
-			if (regionSelected && incomeLevelSelected && lendingTypeSelected
-					&& region.equalsIgnoreCase(c.getRegion().getValue())
-					&& !c.getName().equalsIgnoreCase(country.get().getName())
-					&& incomeLevel.equalsIgnoreCase(c.getIncomeLevel().getValue())
-					&& lendingType.equalsIgnoreCase(c.getLendingType().getValue()))
-				resultList.add(c);
-
-			else if (regionSelected && incomeLevelSelected && region.equalsIgnoreCase(c.getRegion().getValue())
-					&& !c.getName().equalsIgnoreCase(country.get().getName())
-					&& incomeLevel.equalsIgnoreCase(c.getIncomeLevel().getValue()))
-				resultList.add(c);
-
-			else if (regionSelected && region.equalsIgnoreCase(c.getRegion().getValue())
-					&& !c.getName().equalsIgnoreCase(country.get().getName()))
-				resultList.add(c);
-		}
-
-		List<CountryWithCapitalCity> countryWithCapitalList = new ArrayList<CountryWithCapitalCity>();
-
-		for (Worldbank r : resultList) {
-
-			CountryWithCapitalCity cwc = new CountryWithCapitalCity();
-			cwc.setCapitalCityName(r.getCapitalCity());
-			cwc.setCountryName(r.getName());
-
-			countryWithCapitalList.add(cwc);
-		}
-
-		return countryWithCapitalList;
+		return resultList;
 
 	}
 
