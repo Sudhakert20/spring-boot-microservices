@@ -35,8 +35,9 @@ public class AuctionController {
 	}
 
 	@GetMapping("/auctionItems/{auctionItemId}")
-	public Optional<Auction> getAuctionItemById(@PathVariable Long auctionItemId) {
-		return repo.findById(auctionItemId);
+	public Auction getAuctionItemById(@PathVariable Long auctionItemId) {
+		Optional<Auction> auction = repo.findById(auctionItemId);
+		return auction.isPresent() ? auction.get() : null;
 	}
 
 	@PostMapping(path = "/auctionItems", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -55,17 +56,13 @@ public class AuctionController {
 		if (updateItem == null)
 			throw new ResourceNotFoundException("Item Not found.");
 
-		if (updateItem.getReservePrice().compareTo(auction.getMaxAutoBidAmount()) >= 0) {
-			Double currentBid = updateItem.getCurrentBid().compareTo(auction.getMaxAutoBidAmount()) >= 0
-					? updateItem.getCurrentBid()
-					: auction.getMaxAutoBidAmount();
-
-			updateItem.setCurrentBid(currentBid);
-			updateItem.setBidderName(auction.getBidderName());
-
-			repo.save(updateItem);
-
-			throw new ReservedPriceNotMetException("The Reserved Price is not met.");
+		if (updateItem.getReservePrice().compareTo(auction.getMaxAutoBidAmount()) > 0) {
+			if (updateItem.getCurrentBid().compareTo(auction.getMaxAutoBidAmount()) < 0) {
+				updateItem.setCurrentBid(auction.getMaxAutoBidAmount());
+				updateItem.setBidderName(auction.getBidderName());
+				repo.save(updateItem);
+				throw new ReservedPriceNotMetException("The Reserved Price is not met.");
+			}
 		}
 
 	}

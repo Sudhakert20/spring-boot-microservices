@@ -10,6 +10,14 @@ public class Item {
 	private String itemId;
 	private String description;
 
+	public Item() {
+	}
+
+	public Item(String itemId, String description) {
+		this.itemId = itemId;
+		this.description = description;
+	}
+
 	public String getItemId() {
 		return itemId;
 	}

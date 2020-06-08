@@ -7,11 +7,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 @JsonInclude(Include. NON_NULL)
 @Entity
+@EnableJpaAuditing
 public class Auction {
 
 	@Id
