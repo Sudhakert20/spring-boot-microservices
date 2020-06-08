@@ -1,21 +1,28 @@
 package com.ally.financial.auctionapplication.model;
 
+import java.io.Serializable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.hibernate.envers.Audited;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-@JsonInclude(Include. NON_NULL)
+@JsonInclude(Include.NON_NULL)
 @Entity
-@EnableJpaAuditing
-public class Auction {
+@Audited
+@EntityListeners(AuditingEntityListener.class)
+public class Auction implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -24,11 +31,12 @@ public class Auction {
 	private Double maxAutoBidAmount;
 	private String bidderName;
 	private Double reservePrice;
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL)
 	private Item item;
-	
-	public Auction() {}
-	
+
+	public Auction() {
+	}
+
 	public Auction(Long auctionItemId) {
 		super();
 		this.auctionItemId = auctionItemId;
